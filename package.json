@@ -1,5 +1,5 @@
 {
-  "name": "style-mod",
+  "name": "@craftzdog/style-mod",
   "version": "4.0.0",
   "description": "A minimal CSS module shim",
   "main": "dist/style-mod.cjs",
