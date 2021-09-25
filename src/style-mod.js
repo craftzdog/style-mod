@@ -19,7 +19,7 @@ export class StyleModule {
   // When `finish` is given, it is called on regular (non-`@`)
   // selectors (after `&` expansion) to compute the final selector.
   constructor(spec, options) {
-    this.rules = []
+    this.rules = {}
     let {finish} = options || {}
 
     function splitSelector(selector) {
@@ -27,7 +27,7 @@ export class StyleModule {
     }
 
     function render(selectors, spec, target, isKeyframes) {
-      let local = [], isAt = /^@(\w+)\b/.exec(selectors[0]), keyframes = isAt && isAt[1] == "keyframes"
+      let local = {}, isAt = /^@(\w+)\b/.exec(selectors[0]), keyframes = isAt && isAt[1] == "keyframes"
       if (isAt && spec == null) return target.push(selectors[0] + ";")
       for (let prop in spec) {
         let value = spec[prop]
@@ -38,21 +38,22 @@ export class StyleModule {
           if (!isAt) throw new RangeError("The value of a property (" + prop + ") should be a primitive value.")
           render(splitSelector(prop), value, local, keyframes)
         } else if (value != null) {
-          local.push(prop.replace(/_.*/, "").replace(/[A-Z]/g, l => "-" + l.toLowerCase()) + ": " + value + ";")
+          local[prop] = value
         }
       }
-      if (local.length || keyframes) {
-        target.push((finish && !isAt && !isKeyframes ? selectors.map(finish) : selectors).join(", ") +
-                    " {" + local.join(" ") + "}")
+      if (local || keyframes) {
+        const sels = (finish && !isAt && !isKeyframes ? selectors.map(finish) : selectors)
+          .map(sel => sel.replace(/^\./, ''))
+        sels.forEach(sel => target[sel] = local)
       }
     }
 
     for (let prop in spec) render(splitSelector(prop), spec[prop], this.rules)
   }
 
-  // :: () → string
-  // Returns a string containing the module's CSS rules.
-  getRules() { return this.rules.join("\n") }
+  getRules() { return this.rules }
+
+  getRuleFor(className) { return this.rules[className] }
 
   // :: () → string
   // Generate a new unique CSS class name.
