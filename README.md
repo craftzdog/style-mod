@@ -47,9 +47,6 @@ create these dynamically, but treat them as one-time allocations.
    When `finish` is given, it is called on regular (non-`@`)
    selectors (after `&` expansion) to compute the final selector.
 
- * **`getRules`**`() → string`\
-   Returns a string containing the module's CSS rules.
-
  * `static `**`newName`**`() → string`\
    Generate a new unique CSS class name.
 

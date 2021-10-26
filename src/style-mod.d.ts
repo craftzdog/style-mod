@@ -2,7 +2,7 @@ export class StyleModule {
   constructor(spec: {[selector: string]: StyleSpec}, options?: {
     finish?(sel: string): string
   })
-  getRules(): string
+  getRules(): {[selector: string]: StyleSpec}
   static mount(root: Document | ShadowRoot | DocumentOrShadowRoot, module: StyleModule | ReadonlyArray<StyleModule>): void
   static newName(): string
 }
